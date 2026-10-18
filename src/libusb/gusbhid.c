@@ -853,7 +853,6 @@ static int set_notifiers(struct ghid_device * device, libusb_context * ctx) {
     for (i = 0; pollfds[i] != NULL && ret != -1; ++i) {
       ret = pollfd_register(device, pollfds[i]->fd, pollfds[i]->events);
     }
-    free(pollfds);
 
     if (ret == -1) {
         // roll-back
@@ -861,9 +860,11 @@ static int set_notifiers(struct ghid_device * device, libusb_context * ctx) {
             pollfd_remove(device, pollfds[i]->fd);
         }
         libusb_set_pollfd_notifiers(ctx, NULL, NULL, NULL);
+        free(pollfds);
         return -1;
     }
 
+    free(pollfds);
     return 0;
 }
 
